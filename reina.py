@@ -1,6 +1,7 @@
 import socketio
 import requests
 import json
+import grp_msg_parse
 
 # standard Python
 #sio = socketio.Client(engineio_logger=True, logger=True)
@@ -9,9 +10,10 @@ sio = socketio.Client()
 # SocketIO Client
 #sio = socketio.AsyncClient(logger=True, engineio_logger=True)
 
-robotqq = ""
-robotip = ""
-posturl = robotip+'/v1/LuaApiCaller?qq='+robotqq+'&funcname=SendMsg&timeout=10'
+REINA_QQ = ""
+REINA_IP = ""
+POST_URL = REINA_IP + '/v1/LuaApiCaller?qq='
+         + REINA_QQ + '&funcname=SendMsg&timeout=10'
 
 # ----------------------------------------------------- 
 @sio.event
@@ -48,18 +50,17 @@ def disconnect():
 def OnGroupMsgs(message):
     data = message['CurrentPacket']['Data']
     content = data["Content"]
-    if content[:3] == "ene":
-        postcont = '''{
-            "toUser":908030069,
-            "sendToType":2,
-            "sendMsgType":"TextMsg",
-            "content":"I am here!",
-            "groupid":0,
-            "atUser":0,
-            "replayInfo":null
-        }'''
-    res = requests.post(url=posturl, data=postcont) 
-    print(message)
+    if len(content) < 6:
+        return
+    if content[:3].upper() == "ENE" or \
+        content[:4].upper() == "@ENE" or \
+        content[:5].upper() == "REINA" or \
+        content[:6].upper() == "@REINA":
+
+        ret_packet = grp_msg_parse.grp_msg_parse(data)
+        post_content = json.dumps(ret_packet)
+        res = requests.post(url=POST_URL, data=post_content) 
+    pass
 
 ## 接收好友消息，参数 message 是一个 dict 结构，内容例如下：
 #   {
