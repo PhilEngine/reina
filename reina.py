@@ -17,14 +17,14 @@ with open("reina.conf", "rt") as f:
     REINA_QQ = f.readline().strip()
     REINA_IP = f.readline().strip()
 
-POST_URL = REINA_IP + '/v1/LuaApiCaller?qq='
+POST_URL = REINA_IP + '/v1/LuaApiCaller?qq=' \
          + REINA_QQ + '&funcname=SendMsg&timeout=10'
 
 # ----------------------------------------------------- 
 @sio.event
 def connect():
     print('connected to server')
-    sio.emit('GetWebConn',robotqq)
+    sio.emit('GetWebConn', REINA_QQ)
 
 @sio.event
 def disconnect():
@@ -90,16 +90,21 @@ def OnGroupMsgs(message):
 # }
 @sio.on('OnFriendMsgs')
 def OnFriendMsgs(message):
-    postcont = '''{
-    "toUser":,
+    content = message["CurrentPacket"]["Data"]["Content"]
+    print(len(content))
+    if content == "排刀":
+        ret_content = "排刀结果如下"
+
+    postcont = {
+    "toUser": message["CurrentPacket"]["Data"]["FromUin"],
     "sendToType":1,
     "sendMsgType":"TextMsg",
-    "content":"Hello",
+    "content":ret_content,
     "groupid":0,
     "atUser":0,
-    "replayInfo":null
-    }'''
-    res = requests.post(url=posturl, data=postcont)
+    "replayInfo":"null"
+    }
+    res = requests.post(url=POST_URL, data= json.dumps(postcont))
     print(res.text)
     print(message)
 
@@ -110,7 +115,7 @@ def OnEvents(message):
 
 # ----------------------------------------------------- 
 if __name__ == '__main__':
-    sio.connect(robotip, transports=['websocket'])
+    sio.connect(REINA_IP, transports=['websocket'])
     print("Start")
     sio.wait()
     sio.disconnect()
