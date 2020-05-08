@@ -12,6 +12,11 @@ sio = socketio.Client()
 
 REINA_QQ = ""
 REINA_IP = ""
+
+with open("reina.conf", "rt") as f:
+    REINA_QQ = f.readline().strip()
+    REINA_IP = f.readline().strip()
+
 POST_URL = REINA_IP + '/v1/LuaApiCaller?qq='
          + REINA_QQ + '&funcname=SendMsg&timeout=10'
 
@@ -50,16 +55,20 @@ def disconnect():
 def OnGroupMsgs(message):
     data = message['CurrentPacket']['Data']
     content = data["Content"]
-    if len(content) < 6:
-        return
-    if content[:3].upper() == "ENE" or \
-        content[:4].upper() == "@ENE" or \
-        content[:5].upper() == "REINA" or \
-        content[:6].upper() == "@REINA":
+    if len(content) > 3 and content[:3].upper() == "ENE":
+        data["Content"] = content[3:].strip()
+    elif len(content) > 4 and content[:3].upper() == "@ENE":
+        data["Content"] = content[3:].strip()
+    elif len(content) > 5 and content[:3].upper() == "REINA":
+        data["Content"] = content[3:].strip()
+    elif len(content) > 6 and content[:3].upper() == "@REINA":
+        data["Content"] = content[3:].strip()
+    else:
+        return 
 
-        ret_packet = grp_msg_parse.grp_msg_parse(data)
-        post_content = json.dumps(ret_packet)
-        res = requests.post(url=POST_URL, data=post_content) 
+    ret_packet = grp_msg_parse.grp_msg_parse(data)
+    post_content = json.dumps(ret_packet)
+    res = requests.post(url=POST_URL, data=post_content) 
     pass
 
 ## 接收好友消息，参数 message 是一个 dict 结构，内容例如下：
