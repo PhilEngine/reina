@@ -1,4 +1,21 @@
 
+GRP_MSG_PARSE_INIT_FLAG = True
+
+## 完成内容解析后，构造该结构用于发送到群里
+def new_ret_dict(data):
+    ret = { "toUser":data['FromGroupId'], 
+            "sendToType":2,       
+            "sendMsgType":"TextMsg",     
+            "content":"",     
+            "groupid":0,       
+            "atUser":0,      
+            "replayInfo":'null'
+    }
+    return ret
+
+def grp_msg_parse_init():
+    pass
+
 ## 解析群消息，参数 data 为 dict 字典，格式例如下：
 #{
 #   'FromGroupId': 111111111,     ## 消息来自的群号
@@ -23,7 +40,14 @@
 #   "replayInfo":null             ## null
 #}
 def grp_msg_parse(data):
-    ret = str()
-    ## TODO
+    ## 程序重启后加载必要的数据
+    if GRP_MSG_PARSE_INIT_FLAG:
+        GRP_MSG_PARSE_INIT_FLAG = False 
+        grp_msg_parse_init()
 
+    ret_content = str()
+    ## TODO：解析消息并构造返回内容
+
+    ret = new_ret_dict(data)
+    ret['content'] = ret_content
     return ret
