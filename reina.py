@@ -112,6 +112,7 @@ def OnFriendMsgs(message):
         "sendToType": 1,
         "sendMsgType": "PicMsg",
         #"content": ret_content,
+        "content": "拿去撸",
         "groupid": 0,
         "atUser": 0,
         "picBase64Buf": buf,
