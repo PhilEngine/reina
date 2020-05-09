@@ -98,7 +98,7 @@ def OnGroupMsgs(message):
     elif len(content) > 6 and content[:3].upper() == "@REINA":
         data["Content"] = content[3:].strip()
     else:
-        return 
+        data["Content"] = "help"
 
     ret_packet = grp_msg_parse.grp_msg_parse(data)
     post_content = json.dumps(ret_packet)
@@ -127,7 +127,7 @@ def OnFriendMsgs(message):
     data = message['CurrentPacket']['Data']
     content = data["Content"]
 
-if content == "ene 发点色图":
+    if content == "ene 发点色图":
         post_packet = {
             "toUser": data['FromUin'],
             "sendToType": 1,
