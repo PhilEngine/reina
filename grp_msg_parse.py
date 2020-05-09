@@ -45,12 +45,16 @@ def grp_msg_parse_init():
 #}
 def grp_msg_parse(data):
     ## 程序重启后加载必要的数据
+    global GRP_MSG_PARSE_INIT_FLAG
+    global BOSS
+    global MEMBER
+
     if GRP_MSG_PARSE_INIT_FLAG:
         GRP_MSG_PARSE_INIT_FLAG = False 
         grp_msg_parse_init()
 
     ret_content = str()
-    content = data.Content
+    content = data['Content']
     if len(content) >= 2:
         if content[:2] in ['介绍', '帮助', '命令'] \
             or content[:4].lower() == 'help' \

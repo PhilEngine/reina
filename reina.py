@@ -88,9 +88,7 @@ def OnGroupMsgs(message):
 def OnFriendMsgs(message):
     content = message["CurrentPacket"]["Data"]["Content"]
     print(len(content))
-    if content == "排刀":
-        ret_content = "排刀结果如下"
-
+    
     postcont = {
     "toUser": message["CurrentPacket"]["Data"]["FromUin"],
     "sendToType":1,
