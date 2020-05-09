@@ -68,6 +68,24 @@ def OnGroupMsgs(message):
         res = requests.post(url=CONF.POST_URL, data=post_content) 
         print(res.text)
         return 
+    
+    if content == 'ene 来张p站图':
+        post_packet = {
+            "toUser": data['FromGroupId'],
+            "sendToType": 2,
+            "sendMsgType": "PicMsg",
+            "content": "～",
+            "picUrl": 'https://www.pixiv.net/artworks/74325213',
+            "groupid": 0,
+            "atUser": 0,
+            "picBase64Buf": '',
+            "fileMd5": '',
+            "replayInfo": "null"
+        }
+        post_content = json.dumps(post_packet)
+        res = requests.post(url=CONF.POST_URL, data=post_content) 
+        print(res.text)
+        return 
 
     if len(content) > 2 and content[:2] in CONF.REINA_NAME_ZH_CN:
         data["Content"] = content[2:].strip()
