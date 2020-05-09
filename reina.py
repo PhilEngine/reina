@@ -50,17 +50,8 @@ def disconnect():
 def OnGroupMsgs(message):
     data = message['CurrentPacket']['Data']
     content = data["Content"]
-    if len(content) > 2 and content[:2] in CONF.REINA_NAME_ZH_CN:
-        data["Content"] = content[2:].strip()
-    if len(content) > 3 and content[:3].upper() == "ENE":
-        data["Content"] = content[3:].strip()
-    elif len(content) > 4 and content[:3].upper() == "@ENE":
-        data["Content"] = content[3:].strip()
-    elif len(content) > 5 and content[:3].upper() == "REINA":
-        data["Content"] = content[3:].strip()
-    elif len(content) > 6 and content[:3].upper() == "@REINA":
-        data["Content"] = content[3:].strip()
-    elif content == "ene 发点色图":
+
+    if content == "ene 发点色图":
         post_packet = {
             "toUser": data['FromGroupId'],
             "sendToType": 2,
@@ -77,6 +68,17 @@ def OnGroupMsgs(message):
         res = requests.post(url=CONF.POST_URL, data=post_content) 
         print(res.text)
         return 
+
+    if len(content) > 2 and content[:2] in CONF.REINA_NAME_ZH_CN:
+        data["Content"] = content[2:].strip()
+    if len(content) > 3 and content[:3].upper() == "ENE":
+        data["Content"] = content[3:].strip()
+    elif len(content) > 4 and content[:3].upper() == "@ENE":
+        data["Content"] = content[3:].strip()
+    elif len(content) > 5 and content[:3].upper() == "REINA":
+        data["Content"] = content[3:].strip()
+    elif len(content) > 6 and content[:3].upper() == "@REINA":
+        data["Content"] = content[3:].strip()
     else:
         return 
 
