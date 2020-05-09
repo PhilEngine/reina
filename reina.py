@@ -60,6 +60,23 @@ def OnGroupMsgs(message):
         data["Content"] = content[3:].strip()
     elif len(content) > 6 and content[:3].upper() == "@REINA":
         data["Content"] = content[3:].strip()
+    elif content == "ene 发电色图":
+        post_packet = {
+            "toUser": data['FromGroupId'],
+            "sendToType": 2,
+            "sendMsgType": "PicMsg",
+            "content": "拿去撸",
+            "picUrl": 'https://uploadbeta.com/api/pictures/random/?key=%E6%8E%A8%E5%A5%B3%E9%83%8E',
+            "groupid": 0,
+            "atUser": 0,
+            "picBase64Buf": '',
+            "fileMd5": '',
+            "replayInfo": "null"
+        }
+        post_content = json.dumps(post_packet)
+        res = requests.post(url=CONF.POST_URL, data=post_content) 
+        print(res.text)
+        return 
     else:
         return 
 
