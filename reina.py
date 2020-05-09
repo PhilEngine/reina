@@ -3,6 +3,7 @@ import requests
 import json
 import grp_msg_parse
 import conf_parse
+import extend
 
 sio = socketio.Client()
 
@@ -101,16 +102,19 @@ def OnFriendMsgs(message):
     else:
         return 
 
+    buf = extend.get_img_base64_from_url('https://uploadbeta.com/api/pictures/random/?key=%E6%8E%A8%E5%A5%B3%E9%83%8E')
+    
+
     #ret_content = grp_msg_parse.grp_msg_parse(data)
     ret_content = ""
     post_packet = {
         "toUser": data["FromUin"],
         "sendToType": 1,
-        "sendMsgType": "TextMsg",
-        "content": ret_content,
+        "sendMsgType": "PicMsg",
+        #"content": ret_content,
         "groupid": 0,
         "atUser": 0,
-        "picUrl": 'https://uploadbeta.com/api/pictures/random/?key=%E6%8E%A8%E5%A5%B3%E9%83%8E',
+        "picBase64Buf": buf,
         "replayInfo": "null"
     }
 
