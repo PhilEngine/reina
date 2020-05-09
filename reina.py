@@ -89,11 +89,13 @@ def OnFriendMsgs(message):
     content = message["CurrentPacket"]["Data"]["Content"]
     print(len(content))
     
+    data = message['CurrentPacket']['Data']
+    ret_packet = grp_msg_parse.grp_msg_parse(data)
     postcont = {
     "toUser": message["CurrentPacket"]["Data"]["FromUin"],
     "sendToType":1,
     "sendMsgType":"TextMsg",
-    "content":ret_content,
+    "content":ret_packet['content'],
     "groupid":0,
     "atUser":0,
     "replayInfo":"null"
