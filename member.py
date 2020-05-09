@@ -1,30 +1,5 @@
 import os
 
-class Boss:
-    def __init__(self):
-        self.boss = {
-            1: [6000000, 6000000],
-            2: [8000000, 8000000],
-            3: [1000000, 1000000],
-            4: [12000000, 12000000],
-            5: [20000000, 20000000]
-        }
-        self.syuume = 1
-        self.current_boss = 1
-        self.queue = list()
-    pass
-
-    def get_current_boss(self):
-        boss_hpavail = self.boss[self.current_boss][0]
-        boss_hpall = self.boss[self.current_boss][1]
-        ret = str(self.syuume) + "周目，" + \
-              str(self.current_boss) + "王\n" + \
-              str(boss_hpavail) + "/" + \
-              str(boss_hpall) + "，" + \
-              str(round(boss_hpavail / boss_hpall * 100, 2)) + "%"
-        return ret
-
-
 class Member:
     def __init__(self):
         self.member = dict()
@@ -98,8 +73,8 @@ class Member:
             return "今日尚无出刀统计"
         for i in damage_list:
             ret += i[0] + "，" + str(i[1]) + "刀" + \
-                   str(act_all // 1000) + "w" + "，模拟：" + \
-                   str(sim_all // 1000) + "w\n"
+                   str(act_all // 10000) + "w" + "，模拟：" + \
+                   str(sim_all // 10000) + "w\n"
         return ret
 
     ## 统计未出刀的情况
@@ -121,7 +96,7 @@ class Member:
         for i in damage_list:
             ret += i[0] + "(" + str(i[1]) + "刀)  "
             c += 1
-            if c / 2 == 0:
+            if c % 2 == 0:
                 ret += "\n"
         return ret
 

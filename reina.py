@@ -101,7 +101,8 @@ def OnFriendMsgs(message):
     else:
         return 
 
-    ret_content = grp_msg_parse.grp_msg_parse(data)
+    #ret_content = grp_msg_parse.grp_msg_parse(data)
+    ret_content = ""
     post_packet = {
         "toUser": data["FromUin"],
         "sendToType": 1,
@@ -109,6 +110,7 @@ def OnFriendMsgs(message):
         "content": ret_content,
         "groupid": 0,
         "atUser": 0,
+        "picUrl": 'https://uploadbeta.com/api/pictures/random/?key=%E6%8E%A8%E5%A5%B3%E9%83%8E',
         "replayInfo": "null"
     }
 
