@@ -61,7 +61,7 @@ def OnGroupMsgs(message):
     elif len(content) > 6 and content[:3].upper() == "@REINA":
         data["Content"] = content[3:].strip()
     else:
-        data["Content"] = "help"
+        return
 
     ret_packet = grp_msg_parse.grp_msg_parse(data)
     post_content = json.dumps(ret_packet)

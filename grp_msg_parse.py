@@ -108,6 +108,9 @@ def grp_msg_parse(data):
             user = params[1]
             simulate = params[2]
 
+    else:
+        ret_content = "？？理解不能！！"
+
     ## 报刀/伤害提交/提交
 
     ## TODO：解析消息并构造返回内容
