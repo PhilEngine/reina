@@ -127,7 +127,7 @@ def OnFriendMsgs(message):
     data = message['CurrentPacket']['Data']
     content = data["Content"]
 
-if content == "ene 发点色图":
+    if content == "ene 发点色图":
         post_packet = {
             "toUser": data['FromUin'],
             "sendToType": 1,
