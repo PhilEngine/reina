@@ -35,7 +35,7 @@ def get_random_image(data):
         "sendToType": 2,
         "sendMsgType": "PicMsg",
         "content": "给",
-        "picUrl": 'https://img.xjh.me/random_img.php',
+        "picUrl": 'https://acg.xydwz.cn/api/api.php',
         "groupid": 0,
         "atUser": 0,
         "picBase64Buf": '',
