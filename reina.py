@@ -126,6 +126,43 @@ def OnGroupMsgs(message):
 def OnFriendMsgs(message):
     data = message['CurrentPacket']['Data']
     content = data["Content"]
+
+if content == "ene 发点色图":
+        post_packet = {
+            "toUser": data['FromUin'],
+            "sendToType": 1,
+            "sendMsgType": "PicMsg",
+            "content": "拿去撸",
+            "picUrl": 'https://uploadbeta.com/api/pictures/random/?key=%E6%8E%A8%E5%A5%B3%E9%83%8E',
+            "groupid": 0,
+            "atUser": 0,
+            "picBase64Buf": '',
+            "fileMd5": '',
+            "replayInfo": "null"
+        }
+        post_content = json.dumps(post_packet)
+        res = requests.post(url=CONF.POST_URL, data=post_content) 
+        print(res.text)
+        return 
+    
+    if content == 'ene 来张p站图':
+        post_packet = {
+            "toUser": data['FromUin'],
+            "sendToType": 1,
+            "sendMsgType": "PicMsg",
+            "content": "～",
+            "picUrl": 'https://www.pixiv.net/artworks/74325213',
+            "groupid": 0,
+            "atUser": 0,
+            "picBase64Buf": '',
+            "fileMd5": '',
+            "replayInfo": "null"
+        }
+        post_content = json.dumps(post_packet)
+        res = requests.post(url=CONF.POST_URL, data=post_content) 
+        print(res.text)
+        return 
+
     if len(content) > 2 and content[:2] in CONF.REINA_NAME_ZH_CN:
         data["Content"] = content[2:].strip()
     if len(content) > 3 and content[:3].upper() == "ENE":
