@@ -2,33 +2,27 @@ import socketio
 import requests
 import json
 import grp_msg_parse
+import conf_parse
+
+sio = socketio.Client()
 
 # standard Python
 #sio = socketio.Client(engineio_logger=True, logger=True)
-sio = socketio.Client()
 
 # SocketIO Client
 #sio = socketio.AsyncClient(logger=True, engineio_logger=True)
 
-REINA_QQ = ""
-REINA_IP = ""
-
-with open("reina.conf", "rt") as f:
-    REINA_QQ = f.readline().strip()
-    REINA_IP = f.readline().strip()
-
-POST_URL = REINA_IP + '/v1/LuaApiCaller?qq='
-         + REINA_QQ + '&funcname=SendMsg&timeout=10'
+CONF = conf_parse.Conf()
 
 # ----------------------------------------------------- 
 @sio.event
 def connect():
-    print('connected to server')
-    sio.emit('GetWebConn',robotqq)
+    print('Connected to Server')
+    sio.emit('GetWebConn', CONF.REINA_QQ)
 
 @sio.event
 def disconnect():
-    print('disconnected')
+    print('Disconnected')
 
 ## 接收群消息，参数 message 是一个 dict 结构，内容例如下：
 #   {
@@ -55,6 +49,9 @@ def disconnect():
 def OnGroupMsgs(message):
     data = message['CurrentPacket']['Data']
     content = data["Content"]
+
+    if len(content) > 2 and content[:2] in CONF.REINA_NAME_ZH_CN:
+        data["Content"] = content[2:].strip()
     if len(content) > 3 and content[:3].upper() == "ENE":
         data["Content"] = content[3:].strip()
     elif len(content) > 4 and content[:3].upper() == "@ENE":
@@ -64,11 +61,12 @@ def OnGroupMsgs(message):
     elif len(content) > 6 and content[:3].upper() == "@REINA":
         data["Content"] = content[3:].strip()
     else:
-        return 
+        return
 
     ret_packet = grp_msg_parse.grp_msg_parse(data)
     post_content = json.dumps(ret_packet)
-    res = requests.post(url=POST_URL, data=post_content) 
+    res = requests.post(url=CONF.POST_URL, data=post_content)    
+    print(res.text)
     pass
 
 ## 接收好友消息，参数 message 是一个 dict 结构，内容例如下：
@@ -90,27 +88,56 @@ def OnGroupMsgs(message):
 # }
 @sio.on('OnFriendMsgs')
 def OnFriendMsgs(message):
-    postcont = '''{
-    "toUser":,
-    "sendToType":1,
-    "sendMsgType":"TextMsg",
-    "content":"Hello",
-    "groupid":0,
-    "atUser":0,
-    "replayInfo":null
-    }'''
-    res = requests.post(url=posturl, data=postcont)
+    data = message['CurrentPacket']['Data']
+    content = data["Content"]
+
+    if content == "ene 发点色图":
+        post_packet = {
+            "toUser": data['FromUin'],
+            "sendToType": 1,
+            "sendMsgType": "PicMsg",
+            #"content": ret_content,
+            "content": "拿去撸",
+            "picUrl": 'https://uploadbeta.com/api/pictures/random/?key=%E6%8E%A8%E5%A5%B3%E9%83%8E',
+            "groupid": 0,
+            "atUser": 0,
+            "picBase64Buf": '',
+            "fileMd5": '',
+            "replayInfo": "null"
+        }
+        post_content = json.dumps(post_packet)
+        res = requests.post(url=CONF.POST_URL, data=post_content) 
+        print(res.text)
+        return 
+    
+
+    if len(content) > 2 and content[:2] in CONF.REINA_NAME_ZH_CN:
+        data["Content"] = content[2:].strip()
+    if len(content) > 3 and content[:3].upper() == "ENE":
+        data["Content"] = content[3:].strip()
+    elif len(content) > 4 and content[:3].upper() == "@ENE":
+        data["Content"] = content[3:].strip()
+    elif len(content) > 5 and content[:3].upper() == "REINA":
+        data["Content"] = content[3:].strip()
+    elif len(content) > 6 and content[:3].upper() == "@REINA":
+        data["Content"] = content[3:].strip()
+    else:
+        return 
+
+    post_content = json.dumps(post_packet)
+    res = requests.post(url=CONF.POST_URL, data=post_content) 
     print(res.text)
-    print(message)
+    pass
 
 ## 接收事件
 @sio.on('OnEvents')
 def OnEvents(message):
-    print(message)   
+    ## print(message)   
+    pass
 
 # ----------------------------------------------------- 
 if __name__ == '__main__':
-    sio.connect(robotip, transports=['websocket'])
-    print("Start")
+    sio.connect(CONF.REINA_IP, transports=['websocket'])
+    print("Reina Start")
     sio.wait()
     sio.disconnect()
