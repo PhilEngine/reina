@@ -113,14 +113,17 @@ def OnFriendMsgs(message):
         "sendMsgType": "PicMsg",
         #"content": ret_content,
         "content": "拿去撸",
+        "picUrl": 'https://uploadbeta.com/api/pictures/random/?key=%E6%8E%A8%E5%A5%B3%E9%83%8E',
         "groupid": 0,
         "atUser": 0,
-        "picBase64Buf": buf,
+        "picBase64Buf": '',
+        "fileMd5": '',
         "replayInfo": "null"
     }
 
     post_content = json.dumps(post_packet)
     res = requests.post(url=CONF.POST_URL, data=post_content) 
+    print(res.text)
     pass
 
 ## 接收事件
