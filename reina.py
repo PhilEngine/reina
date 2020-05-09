@@ -86,23 +86,35 @@ def OnGroupMsgs(message):
 # }
 @sio.on('OnFriendMsgs')
 def OnFriendMsgs(message):
-    content = message["CurrentPacket"]["Data"]["Content"]
-    print(len(content))
-    
     data = message['CurrentPacket']['Data']
-    ret_packet = grp_msg_parse.grp_msg_parse(data)
-    postcont = {
-    "toUser": message["CurrentPacket"]["Data"]["FromUin"],
-    "sendToType":1,
-    "sendMsgType":"TextMsg",
-    "content":ret_packet['content'],
-    "groupid":0,
-    "atUser":0,
-    "replayInfo":"null"
+    content = data["Content"]
+    if len(content) > 2 and content[:2] in CONF.REINA_NAME_ZH_CN:
+        data["Content"] = content[2:].strip()
+    if len(content) > 3 and content[:3].upper() == "ENE":
+        data["Content"] = content[3:].strip()
+    elif len(content) > 4 and content[:3].upper() == "@ENE":
+        data["Content"] = content[3:].strip()
+    elif len(content) > 5 and content[:3].upper() == "REINA":
+        data["Content"] = content[3:].strip()
+    elif len(content) > 6 and content[:3].upper() == "@REINA":
+        data["Content"] = content[3:].strip()
+    else:
+        return 
+
+    ret_content = grp_msg_parse.grp_msg_parse(data)
+    post_packet = {
+        "toUser": data["FromUin"],
+        "sendToType": 1,
+        "sendMsgType": "TextMsg",
+        "content": ret_content,
+        "groupid": 0,
+        "atUser": 0,
+        "replayInfo": "null"
     }
-    res = requests.post(url=CONF.POST_URL, data= json.dumps(postcont))
-    print(res.text)
-    print(message)
+
+    post_content = json.dumps(post_packet)
+    res = requests.post(url=CONF.POST_URL, data=post_content) 
+    pass
 
 ## 接收事件
 @sio.on('OnEvents')

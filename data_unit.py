@@ -94,6 +94,8 @@ class Member:
         damage_list = sorted(damage_list, key=lambda x:x[3], reverse=True)
 
         ret = str()
+        if len(damage_list) == 0:
+            return "今日尚无出刀统计"
         for i in damage_list:
             ret += i[0] + "，" + str(i[1]) + "刀" + \
                    str(act_all // 1000) + "w" + "，模拟：" + \
@@ -114,6 +116,8 @@ class Member:
 
         ret = str()
         c = 0
+        if len(damage_list) == 0:
+            return "今日已全部出完"
         for i in damage_list:
             ret += i[0] + "(" + str(i[1]) + "刀)  "
             c += 1

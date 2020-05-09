@@ -5,6 +5,19 @@ GRP_MSG_PARSE_INIT_FLAG = True
 BOSS = data_unit.Boss()
 MEMBER = data_unit.Member()
 
+def help():
+    ret = '''ENE です，兰德索尔排刀助手
+    (✪ω✪)
+    1.boss/王
+    2.出刀/申请出刀
+    3.报刀/提交伤害
+    4.队列
+    5.已出刀
+    6.未出刀
+    7.统计
+    8.修正/数据修正'''
+    return ret
+
 ## 完成内容解析后，构造该结构用于发送到群里
 def new_ret_dict(data):
     ret = { "toUser":data['FromGroupId'], 
@@ -55,24 +68,42 @@ def grp_msg_parse(data):
 
     ret_content = str()
     content = data['Content']
-    if len(content) >= 2:
-        if content[:2] in ['介绍', '帮助', '命令'] \
-            or content[:4].lower() == 'help' \
-            or content[0] == '?':
+    len_content = len(content)
+    ## 帮助信息
+    if len_content >= 2 and content[:2] in ['介绍', '帮助', '命令'] or \
+            len_content >= 4 and content[:4].lower() == 'help' or \
+            len_content >= 1 and content[0] == '?':
+        ret_content = help()
+    ## 获取 Boss 剩余血量
+    elif len_content >= 1 and content[0] == '王' or \
+            len_content >= 4 and content[:4].lower() == 'boss':
+        ret_content = BOSS.get_current_boss()
+    elif len_content >= 2 and content[:2] == '一王' or \
+            len_content >= 2 and content[:2] == '1王':
+        ret_content = MEMBER.get_boss_damage(boss_id=1)
+    elif len_content >= 2 and content[:2] == '二王' or \
+            len_content >= 2 and content[:2] == '2王':
+        ret_content = MEMBER.get_boss_damage(boss_id=2)
+    elif len_content >= 2 and content[:2] == '三王' or \
+            len_content >= 2 and content[:2] == '3王':
+        ret_content = MEMBER.get_boss_damage(boss_id=3)
+    elif len_content >= 2 and content[:2] == '四王' or \
+            len_content >= 2 and content[:2] == '4王':
+        ret_content = MEMBER.get_boss_damage(boss_id=4)
+    elif len_content >= 2 and content[:2] == '五王' or \
+            len_content >= 2 and content[:2] == '5王':
+        ret_content = MEMBER.get_boss_damage(boss_id=5)
+    ## 已出刀统计
+    elif len_content >= 3 and content[:3] == "已出刀":
+        ret_content = MEMBER.get_boss_damage(boss_id=0, is_all_damaged=True)
+    ## 未出刀统计
+    elif len_content >= 3 and content[:3] == "未出刀":
+        ret_content = MEMBER.get_not_cutted()
 
-            ret_content = '''\
-ENE です，兰德索尔排刀助手
-(✪ω✪)
-1.boss/王
-2.出刀/申请出刀
-3.报刀/提交伤害
-4.队列
-5.已出刀
-6.未出刀
-7.统计
-8.修正/数据修正'''
     ## TODO：解析消息并构造返回内容
 
-    ret = new_ret_dict(data)
-    ret['content'] = ret_content
-    return ret
+
+    return ret_content
+    # ret = new_ret_dict(data)
+    # ret['content'] = ret_content
+    # return ret
