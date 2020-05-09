@@ -1,5 +1,6 @@
 import member
 import boss
+import hentai
 
 GRP_MSG_PARSE_INIT_FLAG = True
 
@@ -89,6 +90,10 @@ def grp_msg_parse(data):
             ret_content = MEMBER.get_boss_damage(boss_id=4)
         elif cmd == '五王' or cmd == '5王':
             ret_content = MEMBER.get_boss_damage(boss_id=5)
+        elif cmd == "发点色图":
+            return hentai.get_h_image(data)
+        elif cmd == "图片测试":
+            return hentai.get_random_image(data)
         ## 已出刀统计
         elif cmd == "已出刀":
             ret_content = MEMBER.get_boss_damage(boss_id=0, is_all_damaged=True)
@@ -108,7 +113,6 @@ def grp_msg_parse(data):
     ## TODO：解析消息并构造返回内容
 
 
-    return ret_content
-    # ret = new_ret_dict(data)
-    # ret['content'] = ret_content
-    # return ret
+    ret = new_ret_dict(data)
+    ret['content'] = ret_content
+    return ret

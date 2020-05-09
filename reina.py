@@ -3,7 +3,6 @@ import requests
 import json
 import grp_msg_parse
 import conf_parse
-import extend
 
 sio = socketio.Client()
 
@@ -51,42 +50,6 @@ def OnGroupMsgs(message):
     data = message['CurrentPacket']['Data']
     content = data["Content"]
 
-    if content == "ene 发点色图":
-        post_packet = {
-            "toUser": data['FromGroupId'],
-            "sendToType": 2,
-            "sendMsgType": "PicMsg",
-            "content": "拿去撸",
-            "picUrl": 'https://uploadbeta.com/api/pictures/random/?key=%E6%8E%A8%E5%A5%B3%E9%83%8E',
-            "groupid": 0,
-            "atUser": 0,
-            "picBase64Buf": '',
-            "fileMd5": '',
-            "replayInfo": "null"
-        }
-        post_content = json.dumps(post_packet)
-        res = requests.post(url=CONF.POST_URL, data=post_content) 
-        print(res.text)
-        return 
-    
-    if content == 'ene 来张p站图':
-        post_packet = {
-            "toUser": data['FromGroupId'],
-            "sendToType": 2,
-            "sendMsgType": "PicMsg",
-            "content": "～",
-            "picUrl": 'https://www.pixiv.net/artworks/74325213',
-            "groupid": 0,
-            "atUser": 0,
-            "picBase64Buf": '',
-            "fileMd5": '',
-            "replayInfo": "null"
-        }
-        post_content = json.dumps(post_packet)
-        res = requests.post(url=CONF.POST_URL, data=post_content) 
-        print(res.text)
-        return 
-
     if len(content) > 2 and content[:2] in CONF.REINA_NAME_ZH_CN:
         data["Content"] = content[2:].strip()
     if len(content) > 3 and content[:3].upper() == "ENE":
@@ -102,7 +65,8 @@ def OnGroupMsgs(message):
 
     ret_packet = grp_msg_parse.grp_msg_parse(data)
     post_content = json.dumps(ret_packet)
-    res = requests.post(url=CONF.POST_URL, data=post_content) 
+    res = requests.post(url=CONF.POST_URL, data=post_content)    
+    print(res.text)
     pass
 
 ## 接收好友消息，参数 message 是一个 dict 结构，内容例如下：
@@ -132,6 +96,7 @@ def OnFriendMsgs(message):
             "toUser": data['FromUin'],
             "sendToType": 1,
             "sendMsgType": "PicMsg",
+            #"content": ret_content,
             "content": "拿去撸",
             "picUrl": 'https://uploadbeta.com/api/pictures/random/?key=%E6%8E%A8%E5%A5%B3%E9%83%8E',
             "groupid": 0,
@@ -145,23 +110,6 @@ def OnFriendMsgs(message):
         print(res.text)
         return 
     
-    if content == 'ene 来张p站图':
-        post_packet = {
-            "toUser": data['FromUin'],
-            "sendToType": 1,
-            "sendMsgType": "PicMsg",
-            "content": "～",
-            "picUrl": 'https://www.pixiv.net/artworks/74325213',
-            "groupid": 0,
-            "atUser": 0,
-            "picBase64Buf": '',
-            "fileMd5": '',
-            "replayInfo": "null"
-        }
-        post_content = json.dumps(post_packet)
-        res = requests.post(url=CONF.POST_URL, data=post_content) 
-        print(res.text)
-        return 
 
     if len(content) > 2 and content[:2] in CONF.REINA_NAME_ZH_CN:
         data["Content"] = content[2:].strip()
@@ -175,25 +123,6 @@ def OnFriendMsgs(message):
         data["Content"] = content[3:].strip()
     else:
         return 
-
-    buf = extend.get_img_base64_from_url('https://uploadbeta.com/api/pictures/random/?key=%E6%8E%A8%E5%A5%B3%E9%83%8E')
-    
-
-    #ret_content = grp_msg_parse.grp_msg_parse(data)
-    ret_content = ""
-    post_packet = {
-        "toUser": data["FromUin"],
-        "sendToType": 1,
-        "sendMsgType": "PicMsg",
-        #"content": ret_content,
-        "content": "拿去撸",
-        "picUrl": 'https://uploadbeta.com/api/pictures/random/?key=%E6%8E%A8%E5%A5%B3%E9%83%8E',
-        "groupid": 0,
-        "atUser": 0,
-        "picBase64Buf": '',
-        "fileMd5": '',
-        "replayInfo": "null"
-    }
 
     post_content = json.dumps(post_packet)
     res = requests.post(url=CONF.POST_URL, data=post_content) 
