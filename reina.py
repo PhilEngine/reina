@@ -2,33 +2,27 @@ import socketio
 import requests
 import json
 import grp_msg_parse
+import conf_parse
+
+sio = socketio.Client()
 
 # standard Python
 #sio = socketio.Client(engineio_logger=True, logger=True)
-sio = socketio.Client()
 
 # SocketIO Client
 #sio = socketio.AsyncClient(logger=True, engineio_logger=True)
 
-REINA_QQ = ""
-REINA_IP = ""
-
-with open("reina.conf", "rt") as f:
-    REINA_QQ = f.readline().strip()
-    REINA_IP = f.readline().strip()
-
-POST_URL = REINA_IP + '/v1/LuaApiCaller?qq=' \
-         + REINA_QQ + '&funcname=SendMsg&timeout=10'
+CONF = conf_parse.Conf()
 
 # ----------------------------------------------------- 
 @sio.event
 def connect():
-    print('connected to server')
-    sio.emit('GetWebConn', REINA_QQ)
+    print('Connected to Server')
+    sio.emit('GetWebConn', CONF.REINA_QQ)
 
 @sio.event
 def disconnect():
-    print('disconnected')
+    print('Disconnected')
 
 ## 接收群消息，参数 message 是一个 dict 结构，内容例如下：
 #   {
@@ -55,6 +49,8 @@ def disconnect():
 def OnGroupMsgs(message):
     data = message['CurrentPacket']['Data']
     content = data["Content"]
+    if len(content) > 2 and content[:2] in CONF.REINA_NAME_ZH_CN:
+        data["Content"] = content[2:].strip()
     if len(content) > 3 and content[:3].upper() == "ENE":
         data["Content"] = content[3:].strip()
     elif len(content) > 4 and content[:3].upper() == "@ENE":
@@ -68,7 +64,7 @@ def OnGroupMsgs(message):
 
     ret_packet = grp_msg_parse.grp_msg_parse(data)
     post_content = json.dumps(ret_packet)
-    res = requests.post(url=POST_URL, data=post_content) 
+    res = requests.post(url=CONF.POST_URL, data=post_content) 
     pass
 
 ## 接收好友消息，参数 message 是一个 dict 结构，内容例如下：
@@ -104,18 +100,19 @@ def OnFriendMsgs(message):
     "atUser":0,
     "replayInfo":"null"
     }
-    res = requests.post(url=POST_URL, data= json.dumps(postcont))
+    res = requests.post(url=CONF.POST_URL, data= json.dumps(postcont))
     print(res.text)
     print(message)
 
 ## 接收事件
 @sio.on('OnEvents')
 def OnEvents(message):
-    print(message)   
+    ## print(message)   
+    pass
 
 # ----------------------------------------------------- 
 if __name__ == '__main__':
-    sio.connect(REINA_IP, transports=['websocket'])
-    print("Start")
+    sio.connect(CONF.REINA_IP, transports=['websocket'])
+    print("Reina Start")
     sio.wait()
     sio.disconnect()
