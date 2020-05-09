@@ -60,7 +60,7 @@ def OnGroupMsgs(message):
         data["Content"] = content[3:].strip()
     elif len(content) > 6 and content[:3].upper() == "@REINA":
         data["Content"] = content[3:].strip()
-    elif content == "ene 发电色图":
+    elif content == "ene 发点色图":
         post_packet = {
             "toUser": data['FromGroupId'],
             "sendToType": 2,
